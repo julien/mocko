@@ -1,5 +1,5 @@
 {
-  "name": "moco",
+  "name": "mocko",
   "version": "1.0.0",
   "description": "dumb http mock utility ",
   "readme": "dumb http mock utility ",
@@ -12,7 +12,7 @@
   },
 
   "bin": {
-    "moco": "./index.js"
+    "mocko": "./index.js"
   },
 
   "keywords": [

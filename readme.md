@@ -1,4 +1,4 @@
-moco
+mocko
 -------
 
 A dumb http mock utility
@@ -9,14 +9,14 @@ A dumb http mock utility
 
 ### Installation
 
-`npm install moco`
+`npm install mocko`
 
 ### Usage
 
 
 ```
 # start by passing a file path (and optional port)
-node node_modules/.bin/moco **route_file.json** *port*
+node node_modules/.bin/mocko **route_file.json** *port*
 ```
 
 Endpoints are defined in a json file
