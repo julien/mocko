@@ -43,7 +43,7 @@ function requestListener(req, res) {
 
   if (!data) {
     res.writeHead(404);
-    res.end('... Error: file not found.');
+    res.end('');
     return;
   }
   sendReponse(res, data);
