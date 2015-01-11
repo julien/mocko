@@ -17,6 +17,8 @@ if (!file) {
 function sendReponse(res, data) {
   var key;
 
+  if (!res || !data) return;
+
   if (data.body) {
     if (data.headers) {
       for (key in data.headers) {
@@ -50,38 +52,33 @@ function requestListener(req, res) {
 }
 
 function initServer(httpPort) {
-  server = http.createServer(requestListener);
-
-  server.on('error', function (err) {
-    if (err.code === 'EACCES' || err.code === 'EADDRINUSE') {
-      console.log('Failed, starting server');
-    }
-  });
-
-  server.on('listening', function () {
-    console.log('Server listening on httpPort', httpPort);
-    console.log(' Hit <C-c> to exit.');
-  });
-  server.listen(httpPort);
+  server = http.createServer(requestListener)
+    .on('error', function (err) {
+      if (err.code === 'EACCES' || err.code === 'EADDRINUSE') {
+        console.log('Failed, starting server');
+        process.exit(1);
+      }
+    }).on('listening', function () {
+      console.log('Server listening on httpPort', httpPort);
+      console.log(' Hit <C-c> to exit.');
+    }).listen(httpPort);
 }
 
-io.check(file).then(function (filepath) {
-  if (filepath) {
-    io.map(filepath).then(function(){
-      initServer(port);
-    });
+io.map(file)
+  .then(initServer(port))
+  .catch(function (err) {
+    console.error('File not found');
+    process.exit(1);
+  });
 
-    gaze(filepath, function (err, watcher) {
-      watcher.on('changed', function () {
-        console.log('Routes changed');
-        io.map(filepath).then(function () {
-          console.log('Routes reloaded');
-        });
-      });
+gaze(file, function (err, watcher) {
+  watcher.on('changed', function () {
+    console.log('Routes changed');
+    io.map(filepath).then(function () {
+      console.log('Routes reloaded');
     });
-  }
+  });
 });
-
 
 process.on('uncaughtException', function (err) {
   console.log('Uncaught Exception:%s %s', os.EOL, err.stack);
