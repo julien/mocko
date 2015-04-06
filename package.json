@@ -24,11 +24,14 @@
   "author": "Julien Castelain <jcastelain@gmail.com>",
   "license": "MIT",
 
-  "devDependencies": {
+  "dependencies": {
     "bluebird": "latest",
+    "gaze": "latest"
+  },
+
+  "devDependencies": {
     "eslint": "latest",
-    "gaze": "latest",
     "istanbul": "latest",
-    "mocha": "^2.1.0"
+    "mocha": "latest"
   }
 }
