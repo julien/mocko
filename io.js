@@ -5,19 +5,15 @@ var fs = require('fs');
 var routes = {};
 
 exports.map = function (file) {
-
   return new Promise(function (resolve, reject) {
     var rs = fs.createReadStream(file);
     var buf = [];
-
     rs.on('error', function (err) {
       reject(err);
     });
-
     rs.on('data', function (chunk) {
       buf.push(chunk.toString());
     });
-
     rs.on('end', function () {
       try {
         routes = JSON.parse(buf.join(''));
@@ -32,11 +28,16 @@ exports.map = function (file) {
 exports.get = function (url) {
   var key;
   var reg;
+  var route;
   for (key in routes) {
-    if (routes.hasOwnProperty(key)) {
+    if (routes.hasOwnProperty(key) && key !== '*') {
       reg = new RegExp(key, 'ig');
       if (reg.exec(url)) {
-        return routes[key];
+        route = routes[key];
+        if (routes['*'] && !route.hasOwnProperty('headers')) {
+          route.headers = routes['*'].headers;
+        }
+        return route;
       }
     }
   }
@@ -44,13 +45,11 @@ exports.get = function (url) {
 
 exports.all = function (fn) {
   var i = 0, l = routes.length;
-
   for (; i < l; i++) {
     if (fn && typeof fn === 'function') {
       fn(routes[i]);
     }
   }
-
   return routes;
 };
 

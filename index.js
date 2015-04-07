@@ -9,9 +9,11 @@ var gaze = require('gaze');
 var io = require('./io');
 var file = process.argv[2];
 var port = process.argv[3] ? process.argv[3] : 8000;
-// base dir for the "json" file
+// Base directory for the ".json" file
 var baseDir = path.dirname(file);
 var server;
+// Common headers
+var headers;
 
 
 if (!file) {
@@ -39,9 +41,7 @@ function sendReponse(res, data) {
     var age = 30 * 24 * 60 * 60 * 1000;
     res.setHeader('Cache-Control', 'public, max-age=' + age);
     res.setHeader('Expires', new Date(Date.now() + age).toUTCString());
-
     res.statusCode = data.statusCode ? data.statusCode : 200;
-
 
     if (typeof data.body === 'string') {
       var fp = path.resolve(baseDir, data.body);
@@ -51,15 +51,17 @@ function sendReponse(res, data) {
         res.writeHead(404);
         res.end('');
       });
-
-    } else if (typeof body === 'object') {
+    } else {
       res.end(JSON.stringify(data.body));
     }
   }
 }
 
 function requestListener(req, res) {
+
+
   var  data = io.get(req.url);
+
 
   if (!data) {
     res.writeHead(404);
@@ -92,14 +94,10 @@ io.map(file)
 gaze(file, function (err, watcher) {
   watcher.on('changed', function () {
     console.log('Routes changed');
-    io.map(filepath).then(function () {
+    io.map(file).then(function () {
       console.log('Routes reloaded');
     });
   });
-});
-
-process.on('uncaughtException', function (err) {
-  console.log('Uncaught Exception:%s %s', os.EOL, err.stack);
 });
 
 process.on('SIGINT', function () {

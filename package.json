@@ -1,6 +1,6 @@
 {
   "name": "mocko",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "dumb http mock utility ",
   "readme": "dumb http mock utility ",
   "main": "index.js",
