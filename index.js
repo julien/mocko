@@ -2,12 +2,17 @@
 'use strict';
 
 var http = require('http');
+var fs = require('fs');
 var os = require('os');
+var path = require('path');
 var gaze = require('gaze');
 var io = require('./io');
 var file = process.argv[2];
 var port = process.argv[3] ? process.argv[3] : 8000;
+// base dir for the "json" file
+var baseDir = path.dirname(file);
 var server;
+
 
 if (!file) {
   console.error('You need to specify a file path');
@@ -36,7 +41,20 @@ function sendReponse(res, data) {
     res.setHeader('Expires', new Date(Date.now() + age).toUTCString());
 
     res.statusCode = data.statusCode ? data.statusCode : 200;
-    res.end(JSON.stringify(data.body));
+
+
+    if (typeof data.body === 'string') {
+      var fp = path.resolve(baseDir, data.body);
+      io.check(fp).then(function (path) {
+        fs.createReadStream(path).pipe(res);
+      }, function () {
+        res.writeHead(404);
+        res.end('');
+      });
+
+    } else if (typeof body === 'object') {
+      res.end(JSON.stringify(data.body));
+    }
   }
 }
 
@@ -55,7 +73,7 @@ function initServer(httpPort) {
   server = http.createServer(requestListener)
     .on('error', function (err) {
       if (err.code === 'EACCES' || err.code === 'EADDRINUSE') {
-        console.log('Failed, starting server');
+        console.log('Failed, starting server');;
         process.exit(1);
       }
     }).on('listening', function () {
