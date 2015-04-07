@@ -33,5 +33,14 @@
       "Access-Control-Allow-Headers": "X-Requested-With"
     },
     "body": "../../package.json"
+  },
+
+  "/api/4?\\w+": {
+    "headers": {
+      "Content-type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "X-Requested-With"
+    },
+    "body": "../../package.json"
   }
 }

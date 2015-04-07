@@ -30,7 +30,16 @@ exports.map = function (file) {
 };
 
 exports.get = function (url) {
-  return routes[url];
+  var key;
+  var reg;
+  for (key in routes) {
+    if (routes.hasOwnProperty(key)) {
+      reg = new RegExp(key, 'ig');
+      if (reg.exec(url)) {
+        return routes[key];
+      }
+    }
+  }
 };
 
 exports.all = function (fn) {
